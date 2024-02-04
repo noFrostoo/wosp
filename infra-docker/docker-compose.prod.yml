@@ -44,7 +44,7 @@ services:
       - "traefik.http.services.frontend-secure.loadbalancer.server.port=80"
   
   traefik:
-    image: "traefik:v2.10"
+    image: "traefik:v3"
     container_name: "traefik"
     command:
       #- "--log.level=DEBUG"
