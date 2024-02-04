@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-wosp}
+      POSTGRES_USER: ${DB_USER:-wosp}
+      POSTGRES_DB: ${DB_NAME:-wosp}
+    ports:
+      - 5432:5432
+
+  backend:
+    image: nofrostoo/todo-app:dev
+    environment:
+      Signing_Key: ${SIGNING_KEY:-secret}
+    ports:
+      - 8080:8080
+  
+  frontend:
+    image: nofrostoo/todo-app-frontend:dev
+    ports:
+      - 80:80
+      - 443:443
+  
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"

@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: wosp
+      POSTGRES_USER: wosp
+      POSTGRES_DB: wosp
+    ports:
+      - 5432:5432
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    environment:
+      Signing_Key: "secret"
+    ports:
+      - 8080:8080
+  
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - 8081:80
+      - 8082:443
+  
+  
