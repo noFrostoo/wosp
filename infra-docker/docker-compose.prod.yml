@@ -24,7 +24,7 @@ services:
       - "traefik.http.middlewares.backend-https.redirectscheme.permanent=true"
       - "traefik.http.routers.backend-secure.entrypoints=websecure"
       - "traefik.http.routers.backend-secure.rule=Host(`${BACKEND_URL}`)"
-      - "traefik.http.routers.backend-secure.tls.certResolver=myresolver"
+      - "traefik.http.routers.backend-secure.tls.certResolver=letsencrypt"
       - "traefik.http.services.backend-secure.loadbalancer.server.port=8080"
     depends_on:
      - db  
@@ -40,7 +40,7 @@ services:
       - "traefik.http.middlewares.frontend-https.redirectscheme.permanent=true"
       - "traefik.http.routers.frontend-secure.entrypoints=websecure"
       - "traefik.http.routers.frontend-secure.rule=Host(`${FRONTEND_URL}`)"
-      - "traefik.http.routers.frontend-secure.tls.certResolver=myresolver"
+      - "traefik.http.routers.frontend-secure.tls.certResolver=letsencrypt"
       - "traefik.http.services.frontend-secure.loadbalancer.server.port=80"
   
   traefik:
@@ -56,8 +56,8 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
       #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.myresolver.acme.email=daniel.lipniacki@proton.me"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.email=daniel.lipniacki@proton.me"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
     environment:
       - CLOUDFLARE_EMAIL=${CF_EMAIL}
       - CLOUDFLARE_DNS_API_TOKEN=${CF_TOKEN}
