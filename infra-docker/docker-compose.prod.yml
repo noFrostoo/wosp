@@ -21,8 +21,6 @@ services:
       - "traefik.http.routers.backend.entrypoints=web"
       - "traefik.http.routers.backend.rule=Host(`${BACKEND_URL}`)"
       - "traefik.http.services.backend.loadbalancer.server.port=8080"
-    ports:
-      - 8080:8080
   
   frontend:
     image: nofrostoo/todo-app-frontend:dev
@@ -35,9 +33,6 @@ services:
       - "traefik.http.routers.frontend-secure.entrypoints=websecure"
       - "traefik.http.routers.frontend-secure.rule=Host(`${FRONTEND_URL}`)"
       - "traefik.http.routers.frontend-secure.tls=true"
-    ports:
-      - 80:80
-      - 443:443
   
   traefik:
     image: "traefik:v2.10"
