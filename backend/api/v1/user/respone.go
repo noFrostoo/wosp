@@ -29,8 +29,8 @@ type userResponse struct {
 	} `json:"user"`
 }
 
-func newUserResponse(u *models.User) *userTokenResponse {
-	r := &userTokenResponse{}
+func newUserResponse(u *models.User) *userResponse {
+	r := &userResponse{}
 	r.User.Username = u.Username
 	r.User.Id = u.Id
 	return r

@@ -9,8 +9,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-wosp}
       POSTGRES_USER: ${DB_USER:-wosp}
       POSTGRES_DB: ${DB_NAME:-wosp}
-    ports:
-      - 5432:5432
 
   backend:
     image: nofrostoo/todo-app:dev

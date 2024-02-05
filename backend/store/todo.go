@@ -49,12 +49,12 @@ func (ts TodoStore) Update(t *models.Todo) (*models.Todo, error) {
 		return nil, err
 	}
 
-	t = &models.Todo{}
-	if err := ts.db.Get(t, "SELECT * FROM \"todo\" where id=$1", t.Id); err != nil {
+	new_t := &models.Todo{}
+	if err := ts.db.Get(new_t, "SELECT * FROM \"todo\" where id=$1", t.Id); err != nil {
 		return nil, err
 	}
 
-	return t, nil
+	return new_t, nil
 }
 
 

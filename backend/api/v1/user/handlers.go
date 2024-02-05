@@ -117,8 +117,13 @@ func (h *UserHandler) UpdateMe(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	fmt.Printf("XD %v \n", user)
+	token, err := generateJWT(user.Id, user.Username, h.jwtSecret)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
+	}
 
-	return c.JSON(http.StatusOK, newUserResponse(user))
+	return c.JSON(http.StatusOK, newUserTokenResponse(user, token))
 }
 
 func (h *UserHandler) UpdateUser(c echo.Context) error {
@@ -137,28 +142,26 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 		return err
 	}
 
-	token, err := generateJWT(user.Id, user.Username, h.jwtSecret)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, utils.NewError(err))
-	}
-
-	return c.JSON(http.StatusOK, newUserTokenResponse(user, token))
+	return c.JSON(http.StatusOK, newUserResponse(user))
 }
 
 func (h *UserHandler) innerUpdateUser(c echo.Context, user *models.User) (*models.User, error) {
 	req := &userUpdateRequest{}
 	new_user, err := req.bind(c)
 	if err != nil {
-		return nil, c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+		fmt.Printf("\naa %v\n ", err)
+		return nil, err
 	}
 
 	new_user.Id = user.Id
 
 	user, err = h.userStore.Update(new_user)
 	if err != nil {
-		return nil, c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+		fmt.Printf("\nbb %v\n ", err)
+		return nil, err
 	}
 
+	fmt.Printf("\nar %v\n ", user)
 	return user, nil
 }
 

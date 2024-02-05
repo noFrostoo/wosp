@@ -2,7 +2,6 @@ package store
 
 import (
 	"backend/models"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -19,7 +18,6 @@ func NewUserStore(db *sqlx.DB) *UserStore {
 }
 
 func (us UserStore) GetByID(id uuid.UUID) (*models.User, error) {
-	fmt.Printf("%v", id)
 	u := &models.User{}
 	if err := us.db.Get(u, "SELECT * FROM \"user\" where id=$1", id); err != nil {
 		return nil, err
@@ -55,12 +53,12 @@ func (us UserStore) Update(u *models.User) (*models.User, error) {
 		return nil, err
 	}
 
-	u = &models.User{}
-	if err := us.db.Get(u, "SELECT * FROM \"user\" where id=$1", u.Id); err != nil {
+	new_u := &models.User{}
+	if err := us.db.Get(new_u, "SELECT * FROM \"user\" where id=$1", u.Id); err != nil {
 		return nil, err
 	}
 
-	return u, nil
+	return new_u, nil
 }
 
 func (us UserStore) Delete(id uuid.UUID) error {

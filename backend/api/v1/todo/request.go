@@ -14,7 +14,7 @@ type todoRequest struct {
 		Description string    `json:"description"`
 		Done        bool      `json:"done"`
 		Due_at      string    `json:"due_at"`
-	} `json:"user"`
+	} `json:"todo"`
 }
 
 func (r *todoRequest) bind(c echo.Context) (*models.Todo, error) {
