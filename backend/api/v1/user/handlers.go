@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	"backend/utils"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/alexedwards/argon2id"
@@ -18,7 +19,8 @@ func (h *UserHandler) SignUp(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	if user, err = h.userStore.Create(user); err != nil {
+	user, err = h.userStore.Create(user)
+	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
@@ -45,7 +47,7 @@ func (h *UserHandler) Login(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, utils.NewError(errors.New("Not found")))
 	}
 
-	match, err := argon2id.ComparePasswordAndHash("pa$$word", req.User.Password)
+	match, err := argon2id.ComparePasswordAndHash(req.User.Password, user.Password)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
@@ -63,7 +65,12 @@ func (h *UserHandler) Login(c echo.Context) error {
 }
 
 func (h *UserHandler) GetMe(c echo.Context) error {
-	user, err := h.userStore.GetByID(userIDFromToken(c))
+	id, err := userIDFromToken(c)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, utils.NewError(err))
+	}
+
+	user, err := h.userStore.GetByID(id)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, utils.NewError(err))
 	}
@@ -81,6 +88,7 @@ func (h *UserHandler) GetMe(c echo.Context) error {
 }
 
 func (h *UserHandler) GetUser(c echo.Context) error {
+	fmt.Printf("a %v", c.Param("id"))
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
@@ -89,25 +97,31 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 	user, err := h.userStore.GetByID(id)
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
-	}
-
-	return c.JSON(http.StatusOK, newUserResponse(user))
-}
-
-func (h *UserHandler) UpdateUser(c echo.Context) error {
-	user, err := h.userStore.GetByID(userIDFromToken(c))
-	if err != nil {
-		return c.JSON(http.StatusNotFound, utils.NewError(err))
-	}
-
-	if err = h.innerUpdateUser(c, user); err != nil {
-		return err
 	}
 
 	return c.JSON(http.StatusOK, newUserResponse(user))
 }
 
 func (h *UserHandler) UpdateMe(c echo.Context) error {
+	id, err := userIDFromToken(c)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, utils.NewError(err))
+	}
+
+	user, err := h.userStore.GetByID(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, utils.NewError(err))
+	}
+
+	user, err = h.innerUpdateUser(c, user)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, newUserResponse(user))
+}
+
+func (h *UserHandler) UpdateUser(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
@@ -118,7 +132,8 @@ func (h *UserHandler) UpdateMe(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, utils.NewError(err))
 	}
 
-	if err = h.innerUpdateUser(c, user); err != nil {
+	user, err = h.innerUpdateUser(c, user)
+	if err != nil {
 		return err
 	}
 
@@ -130,23 +145,22 @@ func (h *UserHandler) UpdateMe(c echo.Context) error {
 	return c.JSON(http.StatusOK, newUserTokenResponse(user, token))
 }
 
-func (h *UserHandler) innerUpdateUser(c echo.Context, user *models.User) error {
+func (h *UserHandler) innerUpdateUser(c echo.Context, user *models.User) (*models.User, error) {
 	req := &userUpdateRequest{}
 	new_user, err := req.bind(c)
 	if err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+		return nil, c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
 	new_user.Id = user.Id
 
-	if err := h.userStore.Update(new_user); err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	user, err = h.userStore.Update(new_user)
+	if err != nil {
+		return nil, c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
 	}
 
-	return nil
+	return user, nil
 }
-
-
 
 func (h *UserHandler) DeleteUser(c echo.Context) error {
 	id, err := uuid.Parse(c.Param("id"))
@@ -159,12 +173,4 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, nil)
-}
-
-func userIDFromToken(c echo.Context) uuid.UUID {
-	id, ok := c.Get("user").(uuid.UUID)
-	if !ok {
-		return uuid.Nil
-	}
-	return id
 }

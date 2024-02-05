@@ -4,13 +4,14 @@ import (
 	"errors"
 	"os"
 
+	"github.com/golang-jwt/jwt/v4"
 	echojwt "github.com/labstack/echo-jwt"
 	"github.com/labstack/echo/v4"
 )
 
 type UserHandler struct {
 	userStore    Store
-	jwtSecret    string
+	jwtSecret    []byte
 }
 
 func NewHandler(userS Store) (*UserHandler, error) {
@@ -21,7 +22,7 @@ func NewHandler(userS Store) (*UserHandler, error) {
 
 	return &UserHandler{
 		userStore:    userS,
-		jwtSecret: secret,
+		jwtSecret: []byte(secret),
 	}, nil
 }
 
@@ -29,7 +30,7 @@ func NewHandler(userS Store) (*UserHandler, error) {
 func (h *UserHandler) Register(group *echo.Group) {
 	skipper := func (c echo.Context) bool {
 		// Skip middleware if path is equal 'login'
-		if c.Request().URL.Path == "/auth" || c.Request().URL.Path == "/" {
+		if c.Request().URL.Path == "/login" || c.Request().URL.Path == "/singup" {
 		  return true
 		}
 		return false
@@ -38,16 +39,18 @@ func (h *UserHandler) Register(group *echo.Group) {
 	jwtMiddleware := echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(h.jwtSecret),
 		Skipper: skipper,
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(jwtCustomClaims)
+		},
 	})
 
-	guestUsers := group.Group("/")
-	guestUsers.POST("/singup", h.SignUp)
-	guestUsers.POST("/login", h.Login)
+	group.POST("/singup", h.SignUp)
+	group.POST("/login", h.Login)
 
 	user := group.Group("/user", jwtMiddleware)
-	user.GET("", h.GetMe)
-	user.GET("/:id", h.GetMe)
+	user.GET("/me", h.GetMe)
+	user.GET("/:id", h.GetUser)
 	user.PUT("/:id", h.UpdateUser)
-	user.PUT("", h.UpdateMe)
+	user.PUT("/me", h.UpdateMe)
 	user.DELETE("/:id", h.DeleteUser)
 }

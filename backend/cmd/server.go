@@ -3,15 +3,27 @@ package main
 import (
 	"log"
 	"backend/router"
+	"backend/store"
+	"backend/api/v1"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	set_up_db()
+	db := set_up_db()
+	us := store.NewUserStore(db)
+	ts := store.NewTodoStore(db)
+	h, err := v1.NewHandler(us, ts)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	e := router.New()
+
+	v1 := e.Group("/api/v1")
+	h.Register(v1)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
@@ -35,7 +47,7 @@ create table if not exists "todo"
 
 
 
-func set_up_db() {
+func set_up_db() (*sqlx.DB) {
 	db, err := sqlx.Connect("postgres", "host=db port=5432 user=wosp dbname=wosp password=wosp sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
@@ -43,4 +55,5 @@ func set_up_db() {
 
 	db.MustExec(schema)
 
+	return db
 }

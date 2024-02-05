@@ -8,5 +8,5 @@ type Todo struct {
 	Title       string    `db:"title"`
 	Description string    `db:"description"`
 	Done        bool      `db:"done"`
-	due_at      string    `db:"due_at"`
+	Due_at      string    `db:"due_at"`
 }
