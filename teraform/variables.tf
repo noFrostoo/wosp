@@ -1,6 +1,5 @@
 variable "api_key" {
   type        = string
-  default     = "api-key"
 }
 
 variable "region" {
@@ -32,12 +31,10 @@ variable "nodes_quantity" {
   }
 }
 
-
 variable "k8s_version" {
   type        = string
   default     = "v1.29.1+1"
 }
-
 
 variable "k8s_label" {
   type        = string
