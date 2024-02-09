@@ -1,2 +1,4 @@
 pkg/*
 bin/*
+.terraform*
+terraform.tf*
