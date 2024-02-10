@@ -1,4 +1,6 @@
 pkg/*
+pkg/
 bin/*
+bin/
 .terraform*
 terraform.tf*
