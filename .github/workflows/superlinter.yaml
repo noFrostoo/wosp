@@ -1,6 +1,11 @@
+---
 name: Super-Linter
 
-on: push
+on:
+  push:
+    branches-ignore: [master, main]
+  pull_request:
+    branches: [master, main]
 
 jobs:
   super-lint:
