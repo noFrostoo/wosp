@@ -18,13 +18,10 @@ ingress:
   enabled: false
   className: ""
   domain: "piwo.pw"
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls:
+    secretName: ingress-tls-secret
+    hosts:
+      - piwo.pw
 
 db:
   password: "wosp"

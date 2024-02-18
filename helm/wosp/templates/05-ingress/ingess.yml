@@ -1,7 +1,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-ng
+  name: ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "cloudflare-issuer"
 spec:
   ingressClassName: nginx
   rules:
@@ -18,10 +20,14 @@ spec:
     - host: {{ .Values.ingress.domain | quote }}
       http:
         paths:
-          - path: /api*
+          - path: /api/
             pathType: Prefix
             backend:
               service:
                 name: backend
                 port:
                   number: 8080
+  tls:
+  - hosts:
+      {{ .Values.ingress.tls.hosts }} 
+    secretName: {{ .Values.ingress.tls.secretName }}
