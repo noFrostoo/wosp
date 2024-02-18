@@ -11,6 +11,7 @@ spec:
     matchLabels:
       name: database
   template:
+    metadata:
       labels:
         name: database
     spec:

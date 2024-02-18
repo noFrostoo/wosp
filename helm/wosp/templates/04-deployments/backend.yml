@@ -11,6 +11,7 @@ spec:
     matchLabels:
       name: backend
   template:
+    metadata:
       labels:
         name: backend
     spec:
@@ -49,10 +50,10 @@ spec:
                   key: DB_PASSWORD
                   name: db-secret
             - name: Signing_Key
-                valueFrom:
-                  secretKeyRef:
-                    key: SIGNING_KEY
-                    name: backend-secret
+              valueFrom:
+                secretKeyRef:
+                  key: SIGNING_KEY
+                  name: backend-secret
           startupProbe:
             httpGet:
               path: /healthz
@@ -84,4 +85,3 @@ spec:
             nodePublishSecretRef:
               name: {{ .Values.external_secrets.secret_name | quote }}
 {{- end }}
-
