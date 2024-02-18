@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+  {{- include "wosp.labels" . | nindent 4 }}
+  name: backend
+spec:
+  replicas: {{ .Values.replicas.backend | default 1 }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: backend
+  template:
+    metadata:
+      labels:
+        name: backend
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml .Values.nodeSelector }}
+      {{- end }}
+      restartPolicy: Always
+      containers:
+        - name: backend
+          image: {{ .Values.image.repository }}/todo-app:{{ .Values.image.tags.backend }}
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_HOST
+                  name: db-config
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_DATABASE
+                  name: db-config
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: DB_USERNAME
+                  name: db-config
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: db-secret
+            - name: Signing_Key
+              valueFrom:
+                secretKeyRef:
+                  key: SIGNING_KEY
+                  name: backend-secret
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 6
+            failureThreshold: 100
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30
+            failureThreshold: 3
+            periodSeconds: 10
+{{- if .Values.external_secrets.enabled }}
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+{{- end }}
+{{- if .Values.external_secrets.enabled }}
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.external_secrets.class_name | quote }}
+            nodePublishSecretRef:
+              name: {{ .Values.external_secrets.secret_name | quote }}
+{{- end }}

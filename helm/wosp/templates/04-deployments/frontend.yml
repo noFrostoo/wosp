@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+  {{- include "wosp.labels" . | nindent 4 }}
+  name: frontend
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: frontend
+  template:
+    metadata:
+      labels:
+        name: frontend
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml .Values.nodeSelector}}
+      {{- end }}
+      restartPolicy: Always
+      containers:
+        - image: {{ .Values.image.repository }}/todo-app-frontend:{{ .Values.image.tags.backend }}
+          name: frontend
+          ports:
+            - containerPort: 80
+              hostPort: 8081
+              protocol: TCP
+            - containerPort: 443
+              hostPort: 8082
+              protocol: TCP
+          resources: {}
+      restartPolicy: Always

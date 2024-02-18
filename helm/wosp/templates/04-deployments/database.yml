@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+  {{- include "wosp.labels" . | nindent 4 }}
+  name: database
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: database
+  template:
+    metadata:
+      labels:
+        name: database
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml .Values.nodeSelector}}
+      {{- end }}
+      restartPolicy: Always
+      containers:
+        - env:
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                key: DB_DATABASE
+                name: db-config
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                key: DB_USERNAME
+                name: db-config
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: DB_PASSWORD
+                name: db-secret
+          image: postgres
+          name: database
+          ports:
+            - containerPort: 5432
+              hostPort: 5432
+              protocol: TCP

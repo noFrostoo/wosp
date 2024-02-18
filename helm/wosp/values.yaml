@@ -1,0 +1,40 @@
+# Default values for wosp.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+external_secrets:
+  enabled: false
+  class_name: ""
+  secret_name: ""
+
+image:
+  repository: nofrostoo
+  tags:
+    backend: dev
+    frontend: dev
+
+
+ingress:
+  enabled: false
+  className: ""
+  domain: "piwo.pw"
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+db:
+  password: "wosp"
+  username: "wosp"
+  database: "wosp"
+  hostname: "database"
+
+backend:
+  signing_key: "xadaRFAFAFASFAFAFAF"
+
+
+replicas:
+  backend: 1
