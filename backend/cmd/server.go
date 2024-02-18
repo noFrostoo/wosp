@@ -1,10 +1,12 @@
 package main
 
 import (
-	"log"
+	"backend/api/v1"
 	"backend/router"
 	"backend/store"
-	"backend/api/v1"
+	"fmt"
+	"log"
+	"os"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -48,7 +50,28 @@ create table if not exists "todo"
 
 
 func set_up_db() (*sqlx.DB) {
-	db, err := sqlx.Connect("postgres", "host=db port=5432 user=wosp dbname=wosp password=wosp sslmode=disable")
+	database_name, ok := os.LookupEnv("DB_DATABASE")
+	if !ok {
+		log.Fatal("Not database name, cannot start")
+	}
+
+	db_username, ok := os.LookupEnv("DB_USERNAME")
+	if !ok {
+		log.Fatal("Not database name, cannot start")
+	}
+
+	db_host, ok := os.LookupEnv("DB_HOST")
+	if !ok {
+		log.Fatal("Not database name, cannot start")
+	}
+
+	db_password, ok := os.LookupEnv("DB_PASSWORD")
+	if !ok {
+		log.Fatal("Not database name, cannot start")
+	}
+
+	db_string := fmt.Sprintf("host=%s port=5432 user=%s dbname=%s password=%s sslmode=disable", db_host, db_username, database_name, db_password)
+	db, err := sqlx.Connect("postgres", db_string)
 	if err != nil {
 		log.Fatalln(err)
 	}
