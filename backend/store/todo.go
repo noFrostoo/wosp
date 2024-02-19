@@ -26,8 +26,8 @@ func (ts TodoStore) GetByID(id uuid.UUID) (*models.Todo, error) {
 	return t, nil
 }
 
-func (ts TodoStore) GetAllByUser(user_id uuid.UUID) ([]models.Todo, error) {
-	t := []models.Todo{}
+func (ts TodoStore) GetAllByUser(user_id uuid.UUID) (*[]models.Todo, error) {
+	t := &[]models.Todo{}
 	if err := ts.db.Select(t, "SELECT * FROM \"todo\" where user_id=$1", user_id); err != nil {
 		return nil, err
 	}

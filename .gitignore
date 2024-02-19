@@ -4,3 +4,4 @@ bin/*
 bin/
 .terraform*
 terraform.tf*
+backend/app
