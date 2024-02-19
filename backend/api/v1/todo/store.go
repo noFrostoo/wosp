@@ -8,7 +8,7 @@ import (
 
 type Store interface {
 	GetByID(uuid.UUID) (*models.Todo, error)
-	GetAllByUser(uuid.UUID) ([]models.Todo, error)
+	GetAllByUser(uuid.UUID) (*[]models.Todo, error)
 	Create(*models.Todo) (*models.Todo, error)
 	Update(*models.Todo) (*models.Todo, error)
 	Delete(uuid.UUID) error

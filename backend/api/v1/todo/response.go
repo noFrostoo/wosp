@@ -6,16 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
+type todo struct {
+	Id 			uuid.UUID `json:"id"`
+	User_id     uuid.UUID `json:"user_id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Done        bool      `json:"done"`
+	Due_at      string    `json:"due_at"`
+}
 
 type todoResponse struct {
-	Todo struct {
-		Id 			uuid.UUID `json:"id"`
-		User_id     uuid.UUID `json:"user_id"`
-		Title       string    `json:"title"`
-		Description string    `json:"description"`
-		Done        bool      `json:"done"`
-		Due_at      string    `json:"due_at"`
-	} `json:"user"`
+	Todo todo `json:"todo"`
 }
 
 func newTodoResponse(todo *models.Todo) todoResponse {
@@ -27,4 +28,25 @@ func newTodoResponse(todo *models.Todo) todoResponse {
 	t.Todo.Due_at = todo.Due_at
 
 	return t
+}
+
+type todosResponse struct {
+	Todos []todo `json:"todos"`
+}
+
+func newTodosResponse(todos *[]models.Todo) *todosResponse {
+	r := &todosResponse{}
+	r.Todos = make([]todo, 0)
+	for _, t := range *todos {
+		r.Todos = append(r.Todos, todo{
+			Id:          t.Id,
+			User_id:     t.User_id,
+			Title:       t.Title,
+			Description: t.Description,
+			Done:        t.Done,
+			Due_at:      t.Due_at,
+		})
+	}
+
+	return r
 }

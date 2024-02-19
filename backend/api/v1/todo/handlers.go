@@ -2,6 +2,8 @@ package todo
 
 import (
 	"backend/utils"
+	"fmt"
+
 	"net/http"
 
 	"github.com/google/uuid"
@@ -9,7 +11,22 @@ import (
 )
 
 func (h *TodoHandler) GetAllByUser(c echo.Context) error {
-	return nil
+	unparsed_id := c.QueryParam("user_id")
+
+	id, err := uuid.Parse(unparsed_id)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewError(err))
+	}
+
+	todos, err := h.todoStore.GetAllByUser(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, utils.NewError(err))
+	}
+
+	fmt.Print(len(*todos))
+	fmt.Printf("\n\n%v\n\n", todos)
+
+	return c.JSON(http.StatusOK, newTodosResponse(todos))
 }
 
 func (h *TodoHandler) GetTodo(c echo.Context) error {
