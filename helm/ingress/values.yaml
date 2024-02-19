@@ -2,3 +2,8 @@ cloudflare:
   api_key: 
   email: 
   name: cloudflare-issuer
+
+cert-manager: 
+  namespace: cert-manager
+
+installCRDs: true
