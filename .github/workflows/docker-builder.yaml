@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-backend:
-    # if: ${{ github.event_name == 'push' && contains(github.event.compare, 'backend/') }}
+    if: ${{ github.event.modified_files | contains('frontend/') }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
