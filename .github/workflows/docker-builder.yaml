@@ -7,8 +7,20 @@ on:
       - docker-build-ci
 
 jobs:
+  check-backend-changes:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check for backend changes
+      id: check_frontend
+      run: |
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^frontend/"; then
+          echo "::set-output name=backend_changed::true"
+        else
+          echo "::set-output name=backend_changed::false"
+        fi
+
   build-backend:
-    if: ${{ github.event.modified_files | contains('frontend/') }}
+    if: ${{ steps.check_frontend.outputs.backend_changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -20,15 +32,27 @@ jobs:
        ./build-backend-push.sh
       shell: bash
       
+  check-frontend-changes:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check for frontend changes
+      id: check_frontend
+      run: |
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^frontend/"; then
+          echo "::set-output name=frontend_changed::true"
+        else
+          echo "::set-output name=frontend_changed::false"
+        fi
+
   build-frontend:
-    if: ${{ github.event.modified_files | contains('frontend/') }}
+    if: ${{ steps.check_frontend.outputs.frontend_changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
       
-    - name: Build Frontend
+    - name: Build frontend
       run: |
-        ls -lah
-        ./build-frontend-push.sh
+       ls -lah
+       ./build-frontend-push.sh
       shell: bash
