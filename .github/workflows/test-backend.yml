@@ -18,8 +18,8 @@ jobs:
         go-version: 1.21.x
     - name: Start db
       run: |
-      cd infra-docker
-      docker-compose -f docker-compose.local.yml up -d db
+        cd infra-docker
+        docker-compose -f docker-compose.local.yml up -d db
     - name: Test code
       env:
         Signing_Key: "test"
