@@ -26,7 +26,6 @@ func newTodoResponse(todo *models.Todo) todoResponse {
 	t.Todo.Description = todo.Description
 	t.Todo.Done = todo.Done
 	t.Todo.Due_at = todo.Due_at
-
 	return t
 }
 
