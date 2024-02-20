@@ -1,0 +1,19 @@
+---
+name: Docker-builder
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run script file
+      run: |
+         chmod +x ./scripts/build-backend-push.sh
+         ./public/scripts/build-backend-push.sh
+      shell: bash
+
