@@ -9,6 +9,7 @@ on:
 
 jobs:
   build-backend:
+    if: ${{ contains(github.event_name, 'push') && contains(github.event.head_commit.modified, 'backend/') }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -21,6 +22,7 @@ jobs:
       shell: bash
       
   build-frontend:
+    if: ${{ contains(github.event_name, 'push') && contains(github.event.head_commit.modified, 'frontend/') }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
