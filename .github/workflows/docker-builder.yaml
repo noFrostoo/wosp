@@ -1,5 +1,5 @@
----
 name: check and build docker images
+
 on:
   push:
     branches:
@@ -7,34 +7,24 @@ on:
       - docker-build-ci
 
 jobs:
-  check-backend-changes:
+  check-changes:
     runs-on: ubuntu-latest
+    outputs:
+      backend_changed: ${{ steps.check_backend.outputs.backend_changed }}
+      frontend_changed: ${{ steps.check_frontend.outputs.frontend_changed }}
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
     - name: Check for backend changes
-      id: check_frontend
+      id: check_backend
       run: |
-        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^frontend/"; then
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^backend/"; then
           echo "::set-output name=backend_changed::true"
         else
           echo "::set-output name=backend_changed::false"
         fi
 
-  build-backend:
-    if: ${{ steps.check_frontend.outputs.backend_changed == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      
-    - name: Build Backend
-      run: |
-       ls -lah
-       ./build-backend-push.sh
-      shell: bash
-      
-  check-frontend-changes:
-    runs-on: ubuntu-latest
-    steps:
     - name: Check for frontend changes
       id: check_frontend
       run: |
@@ -44,15 +34,25 @@ jobs:
           echo "::set-output name=frontend_changed::false"
         fi
 
-  build-frontend:
-    if: ${{ steps.check_frontend.outputs.frontend_changed == 'true' }}
+  build-images:
+    needs: check-changes
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
-    - name: Build frontend
+
+    - name: Build Backend
+      if: needs.check-changes.outputs.backend_changed == 'true'
       run: |
-       ls -lah
-       ./build-frontend-push.sh
+        cd backend
+        ls -lah
+        ./build-backend-push.sh
+      shell: bash
+
+    - name: Build Frontend
+      if: needs.check-changes.outputs.frontend_changed == 'true'
+      run: |
+        cd frontend
+        ls -lah
+        ./build-frontend-push.sh
       shell: bash
