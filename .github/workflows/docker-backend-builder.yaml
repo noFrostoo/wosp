@@ -1,0 +1,21 @@
+---
+name: Build backend image on change
+
+on:
+  push:
+    branches:
+      - main
+      - docker-build-ci
+    paths:
+      - backend/**
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Build backend
+      run: ./scripts/build-backend-push.sh
+      shell: bash

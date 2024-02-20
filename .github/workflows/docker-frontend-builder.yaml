@@ -1,0 +1,21 @@
+---
+name: Build frontend image on change
+
+on:
+  push:
+    branches:
+      - main
+      - docker-build-ci
+    paths:
+      - frontend/**
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Build Frontend
+      run: ./scripts/build-frontend-push.sh
+      shell: bash
