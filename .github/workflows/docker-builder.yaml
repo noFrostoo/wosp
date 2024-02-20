@@ -19,7 +19,6 @@ jobs:
        pwd
        ./build-backend-push.sh
       shell: bash
-      working-directory: scripts  # Update this with the path to your backend directory
       
   build-frontend:
     runs-on: ubuntu-latest
@@ -32,4 +31,3 @@ jobs:
         pwd
         ./build-frontend-push.sh
       shell: bash
-      working-directory: scripts  # Update this with the path to your frontend directory
