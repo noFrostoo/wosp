@@ -25,7 +25,7 @@ func (r *userUpdateRequest) bind(c echo.Context) (*models.User, error) {
 
 	u.Username = r.User.Username
 
-	h, err := hashPassword(r.User.Password)
+	h, err := HashPassword(r.User.Password)
 	if err != nil {
 		return nil, err
 	}

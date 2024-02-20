@@ -57,7 +57,6 @@ func (ts TodoStore) Update(t *models.Todo) (*models.Todo, error) {
 	return new_t, nil
 }
 
-
 func (ts TodoStore) Delete(id uuid.UUID) error {
 	if _, err := ts.db.Exec("delete from \"todo\" where id = $1", id); err != nil {
 		return err

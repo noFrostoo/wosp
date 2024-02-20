@@ -7,7 +7,7 @@ import (
 )
 
 type todo struct {
-	Id 			uuid.UUID `json:"id"`
+	Id          uuid.UUID `json:"id"`
 	User_id     uuid.UUID `json:"user_id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`

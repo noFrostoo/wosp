@@ -9,28 +9,28 @@ import (
 )
 
 type Handler struct {
-	userHandler    user.UserHandler
-	todoHandler    todo.TodoHandler
+	UserHandler user.UserHandler
+	TodoHandler todo.TodoHandler
 }
 
 func NewHandler(userS *store.UserStore, todoS *store.TodoStore) (*Handler, error) {
 	uh, err := user.NewHandler(userS)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	th, err := todo.NewHandler(todoS)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	return &Handler{
-		userHandler:   *uh,
-		todoHandler:   *th,
+		UserHandler: *uh,
+		TodoHandler: *th,
 	}, nil
 }
 
 func (h *Handler) Register(group *echo.Group) {
-	h.userHandler.Register(group)
-	h.todoHandler.Register(group)
+	h.UserHandler.Register(group)
+	h.TodoHandler.Register(group)
 }
