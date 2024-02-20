@@ -14,6 +14,7 @@ func main() {
 	db := db.NewDb()
 	us := store.NewUserStore(db)
 	ts := store.NewTodoStore(db)
+
 	h, err := v1.NewHandler(us, ts)
 	if err != nil {
 		log.Fatal(err)
