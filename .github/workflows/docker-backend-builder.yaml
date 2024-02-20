@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - docker-build-ci
     paths:
       - backend/**
 

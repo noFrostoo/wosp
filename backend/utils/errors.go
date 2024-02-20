@@ -12,6 +12,7 @@ type Error struct {
 func NewError(err error) Error {
 	e := Error{}
 	e.Errors = make(map[string]interface{})
+	fmt.Print("test")
 
 	switch v := err.(type) {
 		case *echo.HTTPError:
