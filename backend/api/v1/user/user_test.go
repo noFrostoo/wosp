@@ -54,10 +54,12 @@ func TestSignup(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			test, err := testutils.SetupTest()
 			assert.NoError(t, err)
+
 			req := httptest.NewRequest(echo.POST, "/api/v1/singup", strings.NewReader(tc.payload))
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
 			c := test.Router.NewContext(req, rec)
+
 			assert.NoError(t, test.Handler.UserHandler.SignUp(c))
 			tc.assert_func(test, rec)
 		})
