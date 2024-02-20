@@ -16,7 +16,11 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: 1.21.x
+    - name: Start db
+      run:  docker-compose up -d db
     - name: Test code
+      env:
+        Signing_Key: "test"
       run: |
        cd backend
        go test ./...
