@@ -6,8 +6,7 @@ import (
 	"github.com/alexedwards/argon2id"
 )
 
-
-func hashPassword(password string) (string, error) {
+func HashPassword(password string) (string, error) {
 	if len(password) == 0 {
 		return "", errors.New("password should not be empty")
 	}

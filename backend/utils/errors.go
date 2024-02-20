@@ -4,7 +4,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"fmt"
 )
-//TODO !
+
+// TODO !
 type Error struct {
 	Errors map[string]interface{} `json:"errors"`
 }
@@ -15,10 +16,10 @@ func NewError(err error) Error {
 	fmt.Print("test")
 
 	switch v := err.(type) {
-		case *echo.HTTPError:
-			e.Errors["body"] = v.Message
-		default:
-			e.Errors["body"] = v.Error()
+	case *echo.HTTPError:
+		e.Errors["body"] = v.Message
+	default:
+		e.Errors["body"] = v.Error()
 	}
 
 	return e

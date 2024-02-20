@@ -10,8 +10,8 @@ import (
 )
 
 type UserHandler struct {
-	userStore    Store
-	jwtSecret    []byte
+	userStore Store
+	jwtSecret []byte
 }
 
 func NewHandler(userS Store) (*UserHandler, error) {
@@ -21,24 +21,23 @@ func NewHandler(userS Store) (*UserHandler, error) {
 	}
 
 	return &UserHandler{
-		userStore:    userS,
+		userStore: userS,
 		jwtSecret: []byte(secret),
 	}, nil
 }
 
-
 func (h *UserHandler) Register(group *echo.Group) {
-	skipper := func (c echo.Context) bool {
+	skipper := func(c echo.Context) bool {
 		// Skip middleware if path is equal 'login'
 		if c.Request().URL.Path == "/login" || c.Request().URL.Path == "/singup" {
-		  return true
+			return true
 		}
 		return false
-	 }
+	}
 
 	jwtMiddleware := echojwt.WithConfig(echojwt.Config{
-		SigningKey:  []byte(h.jwtSecret),
-		Skipper: skipper,
+		SigningKey: []byte(h.jwtSecret),
+		Skipper:    skipper,
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(jwtCustomClaims)
 		},

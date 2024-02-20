@@ -46,7 +46,6 @@ func New() *echo.Echo {
 	return e
 }
 
-
 type JwtConfig struct {
 	// Skipper defines a function to skip middleware.
 	Skipper middleware.Skipper

@@ -1,0 +1,29 @@
+---
+name: Test backend code
+
+on:
+  push:
+    paths:
+      - backend/**
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Setup Go 
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.21.x
+    - name: Start db
+      run: |
+        cd infra-docker
+        docker-compose -f docker-compose.local.yml up -d db
+    - name: Test code
+      env:
+        Signing_Key: "test"
+      run: |
+       cd backend
+       go test ./...
+      shell: bash
