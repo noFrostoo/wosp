@@ -21,5 +21,9 @@ jobs:
         DOCKER_HUB_LOGIN: ${{ secrets.DOCKER_HUB_LOGIN }}
         DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
       run: |
-       docker login --username "$env:DOCKER_HUB_LOGIN" --password "$env:DOCKER_HUB_TOKEN"
+       docker login --username "$DOCKER_HUB_LOGIN" --password "$DOCKER_HUB_TOKEN"
+       ./scripts/build-frontend-push.sh
       shell: bash
+
+
+docker login --username nofrostoo --password dckr_pat_4EAdN-i2IZW8rq7k78apzHyK3tc
