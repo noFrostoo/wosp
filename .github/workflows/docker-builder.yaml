@@ -1,6 +1,5 @@
 ---
-name: Build and Run
-
+name: check and build docker images
 on:
   push:
     branches:
@@ -17,12 +16,12 @@ jobs:
       
     - name: Build Backend
       run: |
-       pwd
+       ls -lah
        ./build-backend-push.sh
       shell: bash
       
   build-frontend:
-    # if: ${{ github.event_name == 'push' && contains(github.event.compare, 'frontend/') }}
+    if: ${{ github.event.modified_files | contains('frontend/') }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -30,6 +29,6 @@ jobs:
       
     - name: Build Frontend
       run: |
-        pwd
+        ls -lah
         ./build-frontend-push.sh
       shell: bash
