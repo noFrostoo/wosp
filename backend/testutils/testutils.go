@@ -42,6 +42,7 @@ func SetupTest() (*Test, error) {
 	e := router.New()
 	t.Router = e
 	t.loadFixtures()
+
 	return &t, nil
 }
 
