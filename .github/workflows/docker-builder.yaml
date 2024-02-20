@@ -4,7 +4,8 @@ name: Build and Run
 on:
   push:
     branches:
-      - main  # You can change this to match your main branch name
+      - main
+      - docker-build-ci
 
 jobs:
   build-backend:
