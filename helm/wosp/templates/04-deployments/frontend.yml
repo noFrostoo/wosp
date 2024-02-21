@@ -22,6 +22,7 @@ spec:
       restartPolicy: Always
       containers:
         - image: {{ .Values.image.repository }}/todo-app-frontend:{{ .Values.image.tags.backend }}
+          imagePullPolicy: "Always"
           name: frontend
           ports:
             - containerPort: 80
