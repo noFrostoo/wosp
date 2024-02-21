@@ -18,6 +18,7 @@ ingress:
   enabled: false
   className: ""
   domain: "piwo.pw"
+  backend_domain: "api.piwo.pw"
   tls:
     secretName: ingress-tls-secret
     hosts:
